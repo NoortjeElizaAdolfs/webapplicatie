@@ -8,6 +8,7 @@ import com.example.webapplicatie.models.User;
 import com.example.webapplicatie.repository.CarRepository;
 import com.example.webapplicatie.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,14 +17,21 @@ import org.webjars.NotFoundException;
 import javax.validation.Valid;
 
 @CrossOrigin(origins = "http://localhost:8080")
+
 @RestController
+
 @RequestMapping("/api")
 public class CarController {
+
     @Autowired
     CarRepository carRepository;
+
+    @Autowired
     UserRepository userRepository;
+
     @GetMapping("/cars")
     public ResponseEntity<List<Car>> getAllTutorials(@RequestParam(required = false) String title) {
+
         try {
             List<Car> cars = new ArrayList<Car>();
             if (title == null)
@@ -39,6 +47,7 @@ public class CarController {
         }
     }
     @GetMapping("/cars/{id}")
+
     public ResponseEntity<Car> getCarById(@PathVariable("id") long id) {
         Optional<Car> carData = carRepository.findById(id);
         if (carData.isPresent()) {
@@ -49,6 +58,7 @@ public class CarController {
     }
 
     @PostMapping("/cars")
+
     public ResponseEntity<Car> createCar(@RequestBody Car car) {
         try {
             // User _user = userRepository.getById(car.getUser().getId());
@@ -65,29 +75,21 @@ public class CarController {
         }
     }
 
-//    @PostMapping("/{user_id}/add_photo")
-//    public @ResponseBody String addNewPhoto(@Valid @PathVariable (value = "user_id") Integer userId, @RequestParam String photoUUID) {
-//        Photo p = new Photo();
-//
-//        userRepository.findById(userId).map( user -> {
-//            p.setUser(user);
-//            p.setPhotoUUID(photoUUID);
-//            return photoRepository.save(p);
-//        });
-//        return "Photo Saved";
-//    }
+    @PostMapping("/cars/{id}")
 
-
-////    @RequestMapping(method = RequestMethod.POST)
-//    @PostMapping("/cars")
-//    public ResponseEntity<?> createCar(@RequestBody Car car) {
-//
-//        try {
-//            return new ResponseEntity<>(carRepository.save(car), HttpStatus.CREATED);
-//        } catch (Exception e) {
-//            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
+    public ResponseEntity<Car> createCar(@RequestBody Car car, @PathVariable(value = "id")long id) {
+        try {
+            User _user = userRepository.getById(id);
+            System.out.println(_user);
+            car.setUser(_user);
+            Car _car = carRepository
+                    .save(
+                    car);
+            return new ResponseEntity<>(_car, HttpStatus.CREATED);
+        } catch (Exception e) {
+              return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     @PutMapping("/cars/{id}")
     public ResponseEntity<Car> updateCar(@PathVariable("id") long id, @RequestBody Car car) {
