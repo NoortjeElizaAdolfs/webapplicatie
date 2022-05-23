@@ -30,7 +30,7 @@ public class CarController {
     UserRepository userRepository;
 
     @GetMapping("/cars")
-    public ResponseEntity<List<Car>> getAllTutorials(@RequestParam(required = false) String title) {
+    public ResponseEntity<List<Car>> getAllCars(@RequestParam(required = false) String title) {
 
         try {
             List<Car> cars = new ArrayList<Car>();
@@ -61,12 +61,12 @@ public class CarController {
 
     public ResponseEntity<Car> createCar(@RequestBody Car car) {
         try {
-            // User _user = userRepository.getById(car.getUser().getId());
+            User _user = userRepository.getById(car.getUser().getId());
             Car _car = carRepository
                     .save(new Car(
                             car.getTitle(),
                             car.getDescription(),
-                            car.getUser(),
+                            _user,
                             false
                     ));
             return new ResponseEntity<>(_car, HttpStatus.CREATED);
@@ -75,11 +75,15 @@ public class CarController {
         }
     }
 
-    @PostMapping("/cars/{id}")
+//    @PostMapping("/cars")
+//    public Car createUser(@Valid @RequestBody User user) { return userService.addUser(user); }
+
+    @PostMapping("/cars/user/{id}")
 
     public ResponseEntity<Car> createCar(@RequestBody Car car, @PathVariable(value = "id")long id) {
         try {
-            User _user = userRepository.getById(id);
+            //User _user = userRepository.getById(id);
+            User _user = userRepository.getById(car.getUser().getId());
             System.out.println(_user);
             car.setUser(_user);
             Car _car = carRepository
@@ -91,7 +95,8 @@ public class CarController {
         }
     }
 
-    @PutMapping("/cars/{id}")
+
+    @PutMapping("/cars/{id}/user/{userId}")
     public ResponseEntity<Car> updateCar(@PathVariable("id") long id, @RequestBody Car car) {
         Optional<Car> carData = carRepository.findById(id);
         if (carData.isPresent()) {
