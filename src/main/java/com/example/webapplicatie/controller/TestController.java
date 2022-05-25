@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+// Test endpoints om te controleren of gebruikers bij bepaalde content kunnen komen
 @CrossOrigin(origins = "*", maxAge = 3600)
 
 @RestController
@@ -20,6 +21,7 @@ public class TestController {
 
     @GetMapping("/user")
 
+    // Endpoint waar alleen een gebruiker met de rol USER bij kan
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public String userAccess() {
         return "User Content.";
@@ -27,6 +29,7 @@ public class TestController {
 
     @GetMapping("/mod")
 
+    // Endpoint waar alleen een gebruiker met de rol MODERATOR bij kan
     @PreAuthorize("hasRole('MODERATOR')")
     public String moderatorAccess() {
         return "Moderator Board.";
@@ -34,6 +37,7 @@ public class TestController {
 
     @GetMapping("/admin")
 
+    // Endpoint waar alleen een gebruiker met de rol ADMIN bij kan
     @PreAuthorize("hasRole('ADMIN')")
     public String adminAccess() {
         return "Admin Board.";

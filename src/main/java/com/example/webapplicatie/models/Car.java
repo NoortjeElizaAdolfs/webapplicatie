@@ -1,18 +1,20 @@
 package com.example.webapplicatie.models;
-import com.fasterxml.jackson.annotation.*;
-import org.apache.tomcat.jni.Address;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
-import java.util.Optional;
 
+
+// Model voor car entity
 @Entity
 @Table(name = "cars")
 public class Car {
 
+    // Definieert tabel kolommen
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(name = "title")
@@ -24,7 +26,8 @@ public class Car {
     @Column(name = "published")
     private boolean published;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    // Defineert relatie tussen car en user
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -32,11 +35,19 @@ public class Car {
 
     public Car() {
     }
+
+    // Car constructor
     public Car(String title, String description, User user, boolean published) {
         this.title = title;
         this.description = description;
         this.published = published;
         this.user = user;
+    }
+
+    // Getters en setters
+    public void setId(long id)
+    {
+        this.id = id;
     }
 
     public long getId() {
@@ -75,6 +86,7 @@ public class Car {
         this.user = user;
     }
 
+    // Defineert response
     @Override
     public String toString() {
         return "Car [id=" + id + ", title=" + title + ", desc=" + description + ", published=" + published + ", user=" + user + "]";

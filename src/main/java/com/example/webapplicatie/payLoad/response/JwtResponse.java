@@ -2,6 +2,7 @@ package com.example.webapplicatie.payLoad.response;
 
 import java.util.List;
 
+// Bepaalt info die mee gestuurd word met inloggen
 public class JwtResponse {
     private String token;
     private String type = "Bearer";

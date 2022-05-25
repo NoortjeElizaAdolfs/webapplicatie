@@ -1,11 +1,14 @@
 package com.example.webapplicatie.controller;
 
+// Importeert packages models en repositories etc
 import com.example.webapplicatie.models.Car;
 import com.example.webapplicatie.models.User;
 import com.example.webapplicatie.payLoad.response.PdfExporter;
 import com.example.webapplicatie.repository.CarRepository;
 import com.example.webapplicatie.repository.UserRepository;
 import com.lowagie.text.DocumentException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +36,8 @@ public class CarController {
     @Autowired
     UserRepository userRepository;
 
+    // Browse endpoint voor cars geeft array van cars terug in Json
+    @Operation(summary = "Endpoints", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping("/cars")
     public ResponseEntity<List<Car>> getAllCars(@RequestParam(required = false) String title) {
 
@@ -50,8 +55,10 @@ public class CarController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @GetMapping("/cars/{id}")
 
+    // Read endpoint voor cars tabel geeft 1 record terug in jason gebaseerd op id
+    @GetMapping("/cars/{id}")
+    @Operation(summary = "Endpoints", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<Car> getCarById(@PathVariable("id") long id) {
         Optional<Car> carData = carRepository.findById(id);
         if (carData.isPresent()) {
@@ -61,8 +68,9 @@ public class CarController {
         }
     }
 
+    // Add endpoint voor cars maakt een niewe record aan in cars
     @PostMapping("/cars")
-
+    @Operation(summary = "Endpoints", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<Car> createCar(@RequestBody Car car) {
         try {
             User _user = userRepository.getById(car.getUser().getId());
@@ -79,11 +87,9 @@ public class CarController {
         }
     }
 
-//    @PostMapping("/cars")
-//    public Car createUser(@Valid @RequestBody User user) { return userService.addUser(user); }
-
+    // Add endpont voor cars waarbij de user id als parameter mee gegeven kan worden
     @PostMapping("/cars/user/{id}")
-
+    @Operation(summary = "Endpoints", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<Car> createCar(@RequestBody Car car, @PathVariable(value = "id")long id) {
         try {
             //User _user = userRepository.getById(id);
@@ -99,8 +105,9 @@ public class CarController {
         }
     }
 
-
+    //Edit endpoint voor cars waarbij car id en user id worden meegegeven
     @PutMapping("/cars/{id}/user/{userId}")
+    @Operation(summary = "Endpoints", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<Car> updateCar(@PathVariable("id") long id, @RequestBody Car car) {
         Optional<Car> carData = carRepository.findById(id);
         if (carData.isPresent()) {
@@ -113,7 +120,9 @@ public class CarController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+    //Delete endpoint voor cars waarbij een auto word verwijderd op basis van id
     @DeleteMapping("/cars/{id}")
+    @Operation(summary = "Endpoints", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<HttpStatus> deleteCar(@PathVariable("id") long id) {
         try {
             carRepository.deleteById(id);
@@ -122,6 +131,8 @@ public class CarController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    //Delete all endpoint voor cars waarbij alle autos verwijderd worden
+    @Operation(summary = "Endpoints", security = @SecurityRequirement(name = "bearerAuth"))
     @DeleteMapping("/cars")
     public ResponseEntity<HttpStatus> deleteAllCars() {
         try {
@@ -131,6 +142,8 @@ public class CarController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    //Endpoint om all gepubliceerde autos te tonen
     @GetMapping("/cars/published")
     public ResponseEntity<List<Car>> findByPublished() {
         try {

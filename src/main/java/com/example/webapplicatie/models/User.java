@@ -1,16 +1,16 @@
 package com.example.webapplicatie.models;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-import java.util.*;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 @Entity
+// User entiteit met unique constrains voor username en email
 @Table(name = "users",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "username"),
@@ -18,6 +18,7 @@ import javax.validation.constraints.Size;
         })
 public class User {
 
+    // Defineert kolommen in user table
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,26 +35,30 @@ public class User {
     @NotBlank
     @Size(max = 120)
     private String password;
+
+    // Defineert relatie met rollen
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
+    //Defineert relatie met car
     @OneToMany(mappedBy = "user")
-//    @JsonIdentityReference(alwaysAsId = true)
-//    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     @JsonIgnore
     private Collection<Car> cars;
 
-
     public User() {
     }
+
+    // Constructor
     public User(String username, String email, String password) {
         this.username = username;
         this.email = email;
         this.password = password;
     }
+
+    // Getters en setters
     public Long getId() {
         return id;
     }

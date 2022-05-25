@@ -9,6 +9,7 @@ public class LoginRequest {
     @NotBlank
     private String password;
 
+    // Defineert input voor login
     public String getUsername() {
         return username;
     }

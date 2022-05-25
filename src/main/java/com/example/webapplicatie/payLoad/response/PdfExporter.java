@@ -12,6 +12,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 
+// Exporteert car naar een pdf bestand
 public class PdfExporter {
     private List <Car> carList;
 
@@ -36,6 +37,8 @@ public class PdfExporter {
         cell.setPhrase(new Phrase("Car:", font));
         table.addCell(cell);
     }
+    // zorgt voor de hoeveel cellen van het PDF bestand.
+    // Laat zien welke cellen er zichtbaar zijn met de namen van het PDF bestand
     private void writeTableData(PdfPTable table){
         PdfPCell cell= new PdfPCell();
         for (Car car: carList){
@@ -56,6 +59,7 @@ public class PdfExporter {
             table.addCell(cell);
         }
     }
+    // instellingen van het PDF bestand kleur etc
     public void export(HttpServletResponse response) throws DocumentException, IOException
     {
         Document document = new Document(PageSize.A4);
