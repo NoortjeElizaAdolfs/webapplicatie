@@ -1,20 +1,24 @@
 package com.example.webapplicatie.controller;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 import com.example.webapplicatie.models.Car;
 import com.example.webapplicatie.models.User;
+import com.example.webapplicatie.payLoad.response.PdfExporter;
 import com.example.webapplicatie.repository.CarRepository;
 import com.example.webapplicatie.repository.UserRepository;
+import com.lowagie.text.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.webjars.NotFoundException;
 
-import javax.validation.Valid;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:8080")
 
@@ -138,5 +142,20 @@ public class CarController {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+    @GetMapping("/cars/export/pdf")
+    public void exportToPdf(HttpServletResponse response) throws DocumentException, IOException
+    {
+        response.setContentType("application/pdf");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        String currentDateTime = dateFormat.format(new Date());
+
+        String headerKey = "Content-Disposition";
+        String headerValue= "attachment; filename=classes_" + currentDateTime + ".pdf";
+        response.setHeader(headerKey, headerValue);
+
+        List<Car> carList = carRepository.findAll();
+        PdfExporter exporter = new PdfExporter(carList);
+        exporter.export(response);
     }
 }
